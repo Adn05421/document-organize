@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>منظّم المستندات | Document Organizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0D2149;--navy2:#16345F;--tq:#19B8A6;--tqbg:#E6F8F5;--bg:#F5F7FA;--card:#fff;--tx:#172033;--tx2:#667085;--bd:#E2E8F0;--ok:#16803C;--wr:#C77700;--er:#C62828;--fs:16px;--ar:"Cairo",Tahoma,Arial,sans-serif;--en:"Inter","Segoe UI",Arial,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1220;--card:#131C2E;--tx:#E8EEF8;--tx2:#9AA7BD;--bd:#26324A;--tqbg:#0F2E33;--ok:#4ADE80;--wr:#F5A524;--er:#F87171;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B1220;--card:#131C2E;--tx:#E8EEF8;--tx2:#9AA7BD;--bd:#26324A;--tqbg:#0F2E33;--ok:#4ADE80;--wr:#F5A524;--er:#F87171;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-size:var(--fs);line-height:1.7}
+html[lang=ar] body{font-family:var(--ar)}html[lang=en] body{font-family:var(--en)}
+button,input,select,textarea{font:inherit;color:inherit}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--navy);z-index:30}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--navy);color:#fff;display:flex;align-items:center;gap:10px;padding:10px 14px}
+header h1{font-size:1.15em;margin:0;flex:1;font-weight:600}
+.ib{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:10px;padding:6px 12px;cursor:pointer}
+aside{position:fixed;top:env(safe-area-inset-top,0px);bottom:0;inset-inline-start:0;width:272px;background:var(--card);border-inline-end:1px solid var(--bd);z-index:40;overflow:auto;padding:12px;transform:translateX(-100%);transition:transform .2s}
+[dir=rtl] aside{transform:translateX(100%)}aside.open{transform:none!important}
+aside h4{margin:14px 8px 4px;color:var(--tx2);font-size:.85em;font-weight:600}
+.nv{display:flex;gap:10px;align-items:center;width:100%;background:none;border:0;padding:10px;border-radius:10px;cursor:pointer;text-align:start}
+.nv.on{background:var(--tqbg);color:var(--navy2);font-weight:600;border-inline-start:4px solid var(--tq)}
+:root[data-theme="dark"] .nv.on,:root:not([data-theme="light"]) .nv.on{color:var(--tx)}
+main{padding:14px;max-width:1100px;margin:auto}
+@media(min-width:900px){aside{transform:none!important}main{margin-inline-start:272px;max-width:none}.menu{display:none}.close{display:none}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px}
+.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.docs.grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.docs.list{display:flex;flex-direction:column;gap:8px}
+.st b{display:block;font-size:1.5em;color:var(--navy2)}
+:root[data-theme="dark"] .st b{color:var(--tq)}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;margin:2px}
+.btn.s{background:var(--tqbg);color:var(--navy2)}.btn.t{background:var(--tq);color:#06231f}.btn.d{background:var(--er)}
+.btn.sm{padding:4px 10px;font-size:.9em}
+input,select,textarea{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;max-width:100%}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.row>input[type=search]{flex:1;min-width:140px}
+.bdg{display:inline-block;border-radius:20px;padding:0 10px;font-size:.85em;border:1px solid currentColor}
+.valid{color:var(--ok)}.soon{color:var(--wr)}.expired{color:var(--er)}
+.meta{color:var(--tx2);font-size:.88em;word-break:break-word}
+.fld{display:block;margin:8px 0}.fld input,.fld select,.fld textarea{width:100%}
+#mod{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:60;display:none;align-items:center;justify-content:center;padding:16px}
+#mod>div{background:var(--card);border-radius:14px;padding:16px;width:min(460px,100%);max-height:90%;overflow:auto}
+#toast{position:fixed;inset-inline:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--navy);color:#fff;padding:10px 14px;border-radius:10px;z-index:70;display:none}
+#sc{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:35}#sc.open{display:block}
+@media(min-width:900px){#sc.open{display:none}}
+.vh{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}label.btn{display:inline-block}.wide{overflow-x:auto}table{border-collapse:collapse;width:100%}td,th{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:start;font-size:.9em}
+:focus-visible{outline:3px solid var(--tq);outline-offset:2px}
+</style>
+</head>
+<body>
+<header><button class="ib menu" onclick="nav(1)" aria-label="menu">☰</button><h1 id="ttl"></h1><button class="ib" onclick="setLang()" id="lb"></button></header>
+<div id="sc" onclick="nav(0)"></div>
+<aside id="nv"></aside>
+<main id="app"><div class="card">جارٍ التحميل… إن بقيت هذه الرسالة فالمتصفح لا يشغّل JavaScript، افتح الملف في Chrome.<br>Loading… if this stays, your viewer is blocking JavaScript; open the file in Chrome.</div></main>
+<div id="mod"><div id="mb"></div></div>
+<div id="toast"></div>
+<input type="file" id="fi" multiple class="vh">
+<input type="file" id="fc" accept="image/*" capture="environment" class="vh">
+<input type="file" id="fr" accept=".json,application/json" class="vh">
+<script>
+window.onerror=(m,u,l)=>{const a=document.getElementById('app');if(a)a.innerHTML='<div class="card" dir="ltr">⚠ '+m+' (line '+l+')</div>'};
+const T={app:['منظّم المستندات','Document Organizer'],g1:['المستندات','Documents'],g2:['التتبع','Tracking'],g3:['الإدارة','Management'],
+home:['الرئيسية','Home'],docs:['كل المستندات','All Documents'],folders:['المجلدات','Folders'],fav:['المفضلة','Favorites'],exp:['تتبع الصلاحية','Expiration Tracking'],log:['سجل النشاط','Activity Log'],bin:['سلة المحذوفات','Recycle Bin'],backup:['التخزين والنسخ الاحتياطي','Storage & Backup'],settings:['الإعدادات','Settings'],about:['عن المطور','Developer'],
+add:['إضافة مستند','Add document'],scan:['تصوير مستند','Capture document'],newf:['مجلد جديد','New folder'],srch:['بحث بالاسم أو الوسم أو الملاحظات…','Search name, tag, notes…'],
+tot:['المستندات','Documents'],nf:['المجلدات','Folders'],sto:['حجم الملفات','File size'],soon:['تقترب صلاحيتها','Expiring soon'],expd:['منتهية','Expired'],fv:['المفضلة','Favorites'],bn:['في السلة','In bin'],act:['آخر نشاط','Latest activity'],bk:['آخر نسخة احتياطية','Last backup'],
+none:['لا يوجد','None'],nobk:['لم تتم أي نسخة احتياطية بعد','No backup yet'],empty:['لا توجد عناصر هنا. أضف مستندًا للبدء.','Nothing here yet. Add a document to start.'],
+valid:['ساري','Valid'],asoon:['يقترب الانتهاء','Expiring soon'],aexp:['منتهي','Expired'],days:['يوم','days'],
+open:['فتح','Open'],dl:['تنزيل','Download'],edit:['تعديل','Edit'],del:['حذف','Delete'],rest:['استعادة','Restore'],purge:['حذف نهائي','Delete forever'],save:['حفظ','Save'],cancel:['إلغاء','Cancel'],
+sel:['تحديد الكل','Select all'],selc:['محدد','selected'],mv:['نقل','Move'],tag:['إضافة وسم','Add tag'],favs:['مفضلة','Favorite'],unf:['إزالة من المفضلة','Unfavorite'],
+nm:['الاسم','Name'],fo:['المجلد','Folder'],ct:['التصنيف','Category'],tg:['الوسوم (بفاصلة)','Tags (comma)'],ex:['تاريخ الانتهاء','Expiry date'],nt:['ملاحظات','Notes'],root:['— بدون مجلد —','— No folder —'],
+dup:['ملف مشابه موجود بالفعل (نفس المحتوى):','A file with the same content already exists:'],dupq:['هل تريد الاحتفاظ بالنسختين؟','Keep both copies?'],
+cdel:['نقل العناصر إلى السلة؟ عددها:','Move items to the bin? Count:'],cpur:['حذف نهائي؟ لا يمكن استرجاعها إلا من نسخة احتياطية تحتويها. العدد:','Delete forever? Recovery is only possible from a backup that contains them. Count:'],
+cfd:['حذف المجلد؟ ستنتقل مستنداته إلى الجذر ومجلداته الفرعية إلى المجلد الأعلى.','Delete folder? Its documents move to the root and subfolders move up one level.'],
+fname:['اسم المجلد','Folder name'],par:['المجلد الأعلى','Parent folder'],ren:['إعادة تسمية','Rename'],
+done:['تم','Done'],fail:['فشل','Failed'],okc:['نجح','Succeeded'],
+exl:['تصدير CSV','Export CSV'],when:['الوقت','Time'],what:['العملية','Action'],item:['العنصر','Item'],res:['النتيجة','Result'],
+bm:['نسخة احتياطية كاملة (ملفات + بيانات)','Full backup (files + metadata)'],bmeta:['تصدير البيانات الوصفية فقط (بدون محتوى الملفات)','Export metadata only (no file contents)'],brs:['استعادة من نسخة','Restore from backup'],
+bnote:['النسخ الكامل يحفظ محتوى الملفات داخل ملف JSON واحد. ربط Google Drive وOCR وZIP والمسح متعدد الصفحات غير متوفرة في هذه النسخة.','The full backup stores file contents in one JSON file. Google Drive, OCR, ZIP and multi-page scanning are not available in this version.'],
+crs:['سيتم استبدال كل البيانات الحالية. المتابعة؟','This replaces all current data. Continue?'],bad:['ملف غير صالح','Invalid file'],
+lang:['اللغة','Language'],thm:['المظهر','Theme'],auto:['تلقائي','Auto'],lt:['فاتح','Light'],dk:['داكن','Dark'],fs:['حجم الخط','Font size'],vw:['العرض','View'],gr:['شبكة','Grid'],ls:['قائمة','List'],
+rem:['تنبيهات الانتهاء (أيام قبل)','Expiry alerts (days before)'],cards:['بطاقات الرئيسية','Home cards'],reset:['استعادة الافتراضي','Reset to default'],exs:['تصدير الإعدادات','Export settings'],ims:['استيراد الإعدادات','Import settings'],
+dv:['المطور','Developer'],mob:['الجوال','Mobile'],wa:['واتساب','WhatsApp'],
+allf:['كل الحالات','All statuses'],onlyf:['المفضلة فقط','Favorites only'],voice:['صوت','Voice'],novo:['البحث الصوتي غير مدعوم في هذا المتصفح','Voice search is not supported here'],
+sig:['النوع الفعلي يختلف عن الامتداد','Actual type differs from extension'],hashno:['تعذّر حساب البصمة؛ المقارنة بالحجم والاسم فقط','Hash unavailable; comparing size and name only'],
+stor:['تعذّر حفظ الملف','Could not store file'],added:['تمت إضافة','Added'],shno:['المشاركة غير مدعومة هنا؛ تم تنزيل الملف بدلًا منها','Sharing is not supported here; the file was downloaded instead'],nofl:['لا توجد مستندات في هذا المجلد','No documents in this folder'],tmp:['التخزين الدائم غير متاح هنا؛ الملفات تُحفظ مؤقتًا حتى إغلاق الصفحة','Persistent storage is unavailable here; files are kept only until the page closes']};
+const t=k=>(T[k]||[k,k])[L==='ar'?0:1];
+const DEF={lang:'ar',theme:'auto',fs:16,view:'grid',cards:['tot','nf','sto','soon','expd','fv','bn','act','bk'],hidden:[],rem:{30:1,7:1,3:1,1:1,0:1}};
+let S,L,V='home',Q='',FF=null,FL={st:'',fav:false},SEL=new Set();
+try{S=JSON.parse(localStorage.getItem('docorg')||'null')}catch(e){}
+S=S||{docs:[],folders:[],log:[],last:null,set:{}};S.set=Object.assign({},DEF,S.set);L=S.set.lang;
+const save=()=>{try{localStorage.setItem('docorg',JSON.stringify(S))}catch(e){toast(t('fail'))}};
+const idb=new Promise(r=>{try{const q=indexedDB.open('docorg',1);q.onupgradeneeded=()=>q.result.createObjectStore('b');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}});
+const MEM=new Map(),fake={put:(b,k)=>{MEM.set(k,b);return{}},get:k=>({result:MEM.get(k)}),delete:k=>{MEM.delete(k);return{}}};let warned=0;
+const bx=async(m,f)=>{try{const d=await idb;if(!d)throw 0;return await new Promise((res,rej)=>{const tx=d.transaction('b',m);const r=f(tx.objectStore('b'));tx.oncomplete=()=>res(r.result);tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error)})}catch(e){if(!warned){warned=1;toast(t('tmp'))}return f(fake).result}};
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nf=n=>new Intl.NumberFormat(L).format(n),fd=d=>new Date(d).toLocaleString(L),uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const sz=b=>b<1024?nf(b)+' B':b<1048576?nf((b/1024).toFixed(1))+' KB':nf((b/1048576).toFixed(1))+' MB';
+function toast(m){const e=$('#toast');e.textContent=m;e.style.display='block';clearTimeout(toast.i);toast.i=setTimeout(()=>e.style.display='none',3500)}
+function log(a,item,ok=true,err=''){S.log.unshift({t:Date.now(),a,item,ok,err});S.log=S.log.slice(0,500);save()}
+function modal(h){$('#mb').innerHTML=h;$('#mod').style.display='flex'}const close=()=>$('#mod').style.display='none';
+function applySet(){const s=S.set;L=s.lang;const h=document.documentElement;h.lang=L;h.dir=L==='ar'?'rtl':'ltr';h.style.setProperty('--fs',s.fs+'px');s.theme==='auto'?h.removeAttribute('data-theme'):h.setAttribute('data-theme',s.theme);document.title=t('app')+' | '+T.app[1];$('#ttl').textContent=t('app');$('#lb').textContent=L==='ar'?'EN':'ع'}
+function setLang(){S.set.lang=L==='ar'?'en':'ar';save();boot()}
+function nav(o){$('#nv').classList.toggle('open',!!o);$('#sc').classList.toggle('open',!!o)}
+function go(v,f){V=v;FF=f||null;SEL.clear();Q='';nav(0);boot(1)}
+function drawNav(){const g=[['g1',['home','docs','folders','fav']],['g2',['exp','log']],['g3',['bin','backup','settings','about']]];
+$('#nv').innerHTML='<button class="ib close" style="color:var(--tx);border-color:var(--bd)" onclick="nav(0)">✕</button>'+g.map(([h,a])=>`<h4>${t(h)}</h4>`+a.map(k=>`<button class="nv ${V===k?'on':''}" onclick="go('${k}')">${ic[k]} ${t(k)}</button>`).join('')).join('')}
+const ic={home:'🏠',docs:'📁',folders:'🗂️',fav:'⭐',exp:'⏳',log:'📜',bin:'🗑️',backup:'☁️',settings:'⚙️',about:'ℹ️'};
+const live=()=>S.docs.filter(d=>!d.del),today=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
+const maxRem=()=>Math.max(0,...Object.keys(S.set.rem).filter(k=>S.set.rem[k]).map(Number));
+function stat(d){if(!d.exp)return{k:'none'};const n=Math.round((new Date(d.exp+'T00:00')-today())/864e5);return{k:n<0?'expired':n<=maxRem()?'soon':'valid',n}}
+function badge(d){const s=stat(d);if(s.k==='none')return'';const l={valid:'✔ '+t('valid'),soon:'⚠ '+t('asoon'),expired:'✖ '+t('aexp')}[s.k];return`<span class="bdg ${s.k}">${l}${s.k!=='expired'?' · '+nf(s.n)+' '+t('days'):''}</span>`}
+const fpath=id=>{let p=[],f;while(id&&(f=S.folders.find(x=>x.id===id))){p.unshift(f.name);id=f.p}return p.join(' / ')};
+function fopts(sel,skip){const o=[];const w=(p,d)=>S.folders.filter(f=>(f.p||'')===p&&f.id!==skip).forEach(f=>{o.push(`<option value="${f.id}" ${f.id===sel?'selected':''}>${'— '.repeat(d)}${esc(f.name)}</option>`);w(f.id,d+1)});w('',0);return`<option value="">${t('root')}</option>`+o.join('')}
+const icon=d=>d.type.startsWith('image')?'🖼️':d.type.includes('pdf')?'📕':/zip|rar/.test(d.type)?'📦':/sheet|excel|csv/.test(d.type)?'📊':/word|text/.test(d.type)?'📝':'📄';
+function boot(keep){applySet();drawNav();render()}
+function render(){const a=$('#app');({home,docs:()=>docsPage(),fav:()=>docsPage('fav'),exp:expPage,bin:binPage,folders:foldersPage,log:logPage,backup:backupPage,settings:setPage,about:aboutPage})[V]();window.scrollTo(0,0)}
+function home(){const D=live(),b=S.docs.filter(d=>d.del),st=D.map(stat);const last=S.log[0];
+const v={tot:D.length,nf:S.folders.length,sto:sz(D.reduce((s,d)=>s+d.size,0)),soon:st.filter(s=>s.k==='soon').length,expd:st.filter(s=>s.k==='expired').length,fv:D.filter(d=>d.fav).length,bn:b.length,act:last?esc(last.a)+' — '+fd(last.t):t('none'),bk:S.last?fd(S.last.t)+(S.last.ok?' ✔':' ✖'):t('nobk')};
+const cs=S.set.cards.filter(c=>!S.set.hidden.includes(c));
+$('#app').innerHTML=`<div class="row"><label class="btn t" for="fi">＋ ${t('add')}</label><label class="btn" for="fc">📷 ${t('scan')}</label><button class="btn s" onclick="go('docs')">🔍 ${t('srch').slice(0,6)}</button><button class="btn s" onclick="folderForm()">🗂️ ${t('newf')}</button><button class="btn s" onclick="go('fav')">⭐ ${t('fav')}</button><button class="btn s" onclick="go('exp')">⏳ ${t('exp')}</button><button class="btn s" onclick="go('backup')">☁️ ${t('backup').split(' ')[0]}</button><button class="btn s" onclick="go('log')">📜 ${t('log')}</button></div><div class="grid">${cs.map(c=>`<div class="card st"><span class="meta">${t(c)}</span><b ${['act','bk'].includes(c)?'style="font-size:.95em"':''}>${v[c]}</b></div>`).join('')}</div>`}
+function match(d){const q=Q.trim().toLowerCase();if(FF&&d.folder!==FF)return false;if(FL.fav&&!d.fav)return false;if(FL.st&&stat(d).k!==FL.st)return false;
+if(!q)return true;return[d.name,fpath(d.folder),d.cat,d.tags.join(' '),d.notes,d.type,fd(d.added)].join(' ').toLowerCase().includes(q)}
+function docsPage(m){if(m==='fav')FL.fav=true;else if(V==='docs'&&!FF&&m!=='keep')FL.fav=FL.fav&&false;
+const fl=FF?`<b>${esc(fpath(FF))}</b>`:'';
+$('#app').innerHTML=`${fl}<div class="row"><input type="search" id="q" placeholder="${t('srch')}" value="${esc(Q)}" oninput="Q=this.value;drawList()"><button class="btn s" onclick="voice()">🎤 ${t('voice')}</button><select onchange="FL.st=this.value;drawList()"><option value="">${t('allf')}</option><option value="valid">${t('valid')}</option><option value="soon">${t('asoon')}</option><option value="expired">${t('aexp')}</option></select><label><input type="checkbox" ${FL.fav?'checked':''} onchange="FL.fav=this.checked;drawList()"> ${t('onlyf')}</label><button class="btn s" onclick="S.set.view=S.set.view==='grid'?'list':'grid';save();drawList()">▦/☰</button><label class="btn t" for="fi">＋ ${t('add')}</label></div><div id="bulk"></div><div id="lst"></div>`;drawList()}
+function drawList(){const L2=live().filter(match);const bk=$('#bulk');
+bk.innerHTML=SEL.size?`<div class="card row"><b>${nf(SEL.size)} ${t('selc')}</b><button class="btn sm" onclick="bulk('fav')">⭐</button><button class="btn sm s" onclick="bulk('unf')">${t('unf')}</button><button class="btn sm s" onclick="bulk('mv')">${t('mv')}</button><button class="btn sm s" onclick="bulk('tag')">${t('tag')}</button><button class="btn sm d" onclick="bulk('del')">${t('del')}</button><button class="btn sm s" onclick="SEL.clear();drawList()">✕</button></div>`:`<div class="row"><button class="btn sm s" onclick="L2all()">${t('sel')}</button></div>`;
+$('#lst').innerHTML=L2.length?`<div class="docs ${S.set.view}">${L2.map(card).join('')}</div>`:`<p class="meta">${t('empty')}</p>`;window._v=L2}
+const L2all=()=>{(window._v||[]).forEach(d=>SEL.add(d.id));drawList()};
+function card(d){return`<div class="card"><label><input type="checkbox" ${SEL.has(d.id)?'checked':''} onchange="this.checked?SEL.add('${d.id}'):SEL.delete('${d.id}');drawList()"> ${icon(d)} <b>${esc(d.name)}</b></label><div class="meta"><bdi>${sz(d.size)}</bdi> · <bdi>${fd(d.added)}</bdi>${d.folder?' · '+esc(fpath(d.folder)):''}${d.cat?' · '+esc(d.cat):''}</div>${d.tags.length?`<div class="meta">#${d.tags.map(esc).join(' #')}</div>`:''}<div>${badge(d)}</div><div class="row"><button class="btn sm s" aria-label="fav" onclick="favT('${d.id}')">${d.fav?'★':'☆'}</button><button class="btn sm s" onclick="openD('${d.id}')">${t('open')}</button><button class="btn sm s" aria-label="share" onclick="shareD('${d.id}')">📤</button><button class="btn sm s" aria-label="download" onclick="dlD('${d.id}')">⬇</button><button class="btn sm s" onclick="editD('${d.id}')">✎</button><button class="btn sm d" onclick="delD(['${d.id}'])">🗑</button></div></div>`}
+function voice(){const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return toast(t('novo'));const r=new R();r.lang=L==='ar'?'ar-SA':'en-US';r.onresult=e=>{Q=e.results[0][0].transcript;$('#q').value=Q;drawList()};r.onerror=()=>toast(t('novo'));r.start()}
+const favT=id=>{const d=S.docs.find(x=>x.id===id);d.fav=!d.fav;log(d.fav?'favorite':'unfavorite',d.name);drawList()};
+async function blobOf(id){return bx('readonly',s=>s.get(id))}
+async function openD(id){try{const b=await blobOf(id);if(!b)throw 0;window.open(URL.createObjectURL(b),'_blank')}catch(e){toast(t('fail'))}}
+async function dlD(id){try{const d=S.docs.find(x=>x.id===id),b=await blobOf(id);if(!b)throw 0;dl(d.name,b)}catch(e){toast(t('fail'))}}
+async function shareD(id){try{const d=S.docs.find(x=>x.id===id),b=await blobOf(id);if(!b)throw 0;const f=new File([b],d.name,{type:d.type});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:d.name});log('share',d.name)}else{dl(d.name,b);toast(t('shno'));log('share',d.name,false,t('shno'))}}catch(e){if(e&&e.name==='AbortError')return;toast(t('fail'))}}
+function dl(n,b){const u=URL.createObjectURL(b);if(/; wv\)/.test(navigator.userAgent)&&window.open(u,'_blank'))return;const a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove()}
+function editD(id){const d=S.docs.find(x=>x.id===id);modal(`<label class="fld">${t('nm')}<input id="e1" value="${esc(d.name)}"></label><label class="fld">${t('fo')}<select id="e2">${fopts(d.folder)}</select></label><label class="fld">${t('ct')}<input id="e3" value="${esc(d.cat)}"></label><label class="fld">${t('tg')}<input id="e4" value="${esc(d.tags.join(', '))}"></label><label class="fld">${t('ex')}<input type="date" id="e5" value="${d.exp||''}"></label><label class="fld">${t('nt')}<textarea id="e6" rows="3">${esc(d.notes)}</textarea></label><button class="btn t" onclick="saveD('${id}')">${t('save')}</button><button class="btn s" onclick="close()">${t('cancel')}</button>`)}
+function saveD(id){const d=S.docs.find(x=>x.id===id),n=$('#e1').value.trim();if(!n)return;Object.assign(d,{name:n,folder:$('#e2').value,cat:$('#e3').value.trim(),tags:$('#e4').value.split(/[,،]/).map(s=>s.trim()).filter(Boolean),exp:$('#e5').value,notes:$('#e6').value,mod:Date.now()});log('edit',n);close();render()}
+function delD(ids){if(!confirm(t('cdel')+' '+nf(ids.length)))return;S.docs.forEach(d=>{if(ids.includes(d.id)){d.del=Date.now();log('delete',d.name)}});ids.forEach(i=>SEL.delete(i));render()}
+function bulk(a){const ids=[...SEL];if(a==='del')return delD(ids);
+if(a==='fav'||a==='unf'){S.docs.forEach(d=>{if(SEL.has(d.id))d.fav=a==='fav'});log(a,nf(ids.length)+' items');SEL.clear();return render()}
+if(a==='mv')return modal(`<label class="fld">${t('fo')}<select id="b1">${fopts('')}</select></label><button class="btn t" onclick="S.docs.forEach(d=>{if(SEL.has(d.id))d.folder=$('#b1').value});log('move',SEL.size+' items');SEL.clear();close();render()">${t('mv')}</button>`);
+if(a==='tag')modal(`<label class="fld">${t('tg')}<input id="b1"></label><button class="btn t" onclick="const g=$('#b1').value.split(/[,،]/).map(s=>s.trim()).filter(Boolean);S.docs.forEach(d=>{if(SEL.has(d.id))d.tags=[...new Set([...d.tags,...g])]});log('tag',SEL.size+' items');SEL.clear();close();render()">${t('save')}</button>`)}
+const ab=b=>new Promise((r,j)=>{const x=new FileReader();x.onload=()=>r(x.result);x.onerror=j;x.readAsArrayBuffer(b)});
+async function sha(f){try{const h=await crypto.subtle.digest('SHA-256',await ab(f));return[...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return''}}
+async function sniff(f){const b=new Uint8Array(await ab(f.slice(0,8))),h=[...b].map(x=>x.toString(16).padStart(2,'0')).join('');
+return h.startsWith('25504446')?'application/pdf':h.startsWith('89504e47')?'image/png':h.startsWith('ffd8ff')?'image/jpeg':h.startsWith('47494638')?'image/gif':h.startsWith('504b')?(f.type||'application/zip'):f.type||'application/octet-stream'}
+async function addFiles(files,src){let ok=0,bad=0;for(const f of files){try{const hash=await sha(f),type=await sniff(f);
+const dup=hash?S.docs.find(d=>!d.del&&d.hash===hash):null;
+if(dup&&!confirm(t('dup')+'\n'+dup.name+' / '+f.name+'\n'+t('dupq')))continue;
+if(!hash)toast(t('hashno'));
+const id=uid();await bx('readwrite',s=>s.put(f,id));
+S.docs.push({id,name:f.name,type,size:f.size,added:Date.now(),mod:Date.now(),folder:FF||'',cat:'',tags:[],exp:'',notes:'',fav:false,del:0,hash,src});log('import',f.name);ok++}catch(e){bad++;window.LE=String(e&&e.message||e);log('import',f.name,false,t('stor')+' '+window.LE)}}
+toast(`${t('added')} ${nf(ok)}${bad?' · '+t('fail')+' '+nf(bad)+' ['+window.LE+']':''}`);render()}
+$('#fi').onchange=e=>{addFiles([...e.target.files],'picker');e.target.value=''};$('#fc').onchange=e=>{addFiles([...e.target.files],'camera');e.target.value=''};
+function expPage(){const D=live().filter(d=>d.exp).sort((a,b)=>a.exp.localeCompare(b.exp));$('#app').innerHTML=D.length?`<div class="docs list">${D.map(d=>card(d)).join('')}</div>`:`<p class="meta">${t('empty')}</p>`}
+function binPage(){const B=S.docs.filter(d=>d.del);$('#app').innerHTML=(B.length?`<div class="row"><button class="btn d" onclick="purge(S.docs.filter(d=>d.del).map(d=>d.id))">${t('purge')} (${nf(B.length)})</button></div><div class="docs list">${B.map(d=>`<div class="card">${icon(d)} <b>${esc(d.name)}</b><div class="meta">${sz(d.size)} · ${fd(d.del)}</div><button class="btn sm s" onclick="restore('${d.id}')">${t('rest')}</button><button class="btn sm d" onclick="purge(['${d.id}'])">${t('purge')}</button></div>`).join('')}</div>`:`<p class="meta">${t('empty')}</p>`)}
+function restore(id){const d=S.docs.find(x=>x.id===id);d.del=0;log('restore',d.name);render()}
+async function purge(ids){if(!confirm(t('cpur')+' '+nf(ids.length)))return;for(const i of ids){const d=S.docs.find(x=>x.id===i);try{await bx('readwrite',s=>s.delete(i));S.docs=S.docs.filter(x=>x.id!==i);log('purge',d.name)}catch(e){log('purge',d.name,false,t('fail'))}}render()}
+function foldersPage(){const w=(p,d)=>S.folders.filter(f=>(f.p||'')===p).map(f=>`<div class="card" style="margin-inline-start:${d*18}px;margin-bottom:6px"><b onclick="go('docs','${f.id}')" style="cursor:pointer">🗂️ ${esc(f.name)}</b> <span class="meta">(${nf(live().filter(x=>x.folder===f.id).length)})</span><div><button class="btn sm s" onclick="go('docs','${f.id}')">${t('open')}</button><button class="btn sm s" aria-label="share" onclick="shareF('${f.id}')">📤</button><button class="btn sm s" onclick="folderForm('${f.id}')">${t('ren')}</button><button class="btn sm d" onclick="delF('${f.id}')">${t('del')}</button></div></div>`+w(f.id,d+1)).join('');
+$('#app').innerHTML=`<div class="row"><button class="btn t" onclick="folderForm()">＋ ${t('newf')}</button></div>`+(S.folders.length?w('',0):`<p class="meta">${t('empty')}</p>`)}
+function folderForm(id){const f=id&&S.folders.find(x=>x.id===id);modal(`<label class="fld">${t('fname')}<input id="f1" value="${f?esc(f.name):''}"></label><label class="fld">${t('par')}<select id="f2">${fopts(f?f.p:FF||'',id)}</select></label><button class="btn t" onclick="saveF('${id||''}')">${t('save')}</button><button class="btn s" onclick="close()">${t('cancel')}</button>`)}
+function saveF(id){const n=$('#f1').value.trim();if(!n)return;const p=$('#f2').value;if(id){const f=S.folders.find(x=>x.id===id);f.name=n;f.p=p;log('rename folder',n)}else{S.folders.push({id:uid(),name:n,p});log('create folder',n)}close();if(V==='home')toast(t('done'));render()}
+async function shareF(id){try{const ids=[id];for(let i=0;i<ids.length;i++)S.folders.filter(x=>x.p===ids[i]).forEach(x=>ids.push(x.id));const ds=live().filter(d=>ids.includes(d.folder));if(!ds.length)return toast(t('nofl'));const fs=[];for(const d of ds){const b=await blobOf(d.id);if(b)fs.push(new File([b],d.name,{type:d.type}))}const f0=S.folders.find(x=>x.id===id).name;if(navigator.canShare&&navigator.canShare({files:fs})){await navigator.share({files:fs,title:f0});log('share folder',f0)}else{for(const f of fs)dl(f.name,f);toast(t('shno'));log('share folder',f0,false,t('shno'))}}catch(e){if(e&&e.name==='AbortError')return;toast(t('fail'))}}
+function delF(id){if(!confirm(t('cfd')))return;const f=S.folders.find(x=>x.id===id);S.docs.forEach(d=>{if(d.folder===id)d.folder=''});S.folders.forEach(x=>{if(x.p===id)x.p=f.p||''});S.folders=S.folders.filter(x=>x.id!==id);log('delete folder',f.name);render()}
+function logPage(){$('#app').innerHTML=`<div class="row"><input type="search" id="lq" placeholder="${t('srch')}" oninput="drawLog()"><button class="btn" onclick="csv()">${t('exl')}</button></div><div class="card wide" id="lg"></div>`;drawLog()}
+function drawLog(){const q=($('#lq').value||'').toLowerCase();const r=S.log.filter(e=>(e.a+' '+e.item).toLowerCase().includes(q));$('#lg').innerHTML=r.length?`<table><tr><th>${t('when')}</th><th>${t('what')}</th><th>${t('item')}</th><th>${t('res')}</th></tr>${r.map(e=>`<tr><td>${fd(e.t)}</td><td>${esc(e.a)}</td><td>${esc(e.item)}</td><td class="${e.ok?'valid':'expired'}">${e.ok?'✔ '+t('okc'):'✖ '+esc(e.err||t('fail'))}</td></tr>`).join('')}</table>`:`<p class="meta">${t('empty')}</p>`}
+function csv(){const q=s=>'"'+String(s).replace(/"/g,'""')+'"';dl('activity-log.csv',new Blob(['\ufeff'+['time,action,item,ok,error',...S.log.map(e=>[new Date(e.t).toISOString(),e.a,e.item,e.ok,e.err].map(q).join(','))].join('\n')],{type:'text/csv'}))}
+function backupPage(){$('#app').innerHTML=`<div class="card"><p>${t('bk')}: <b>${S.last?fd(S.last.t)+(S.last.ok?' ✔':' ✖ '+esc(S.last.err||'')):t('nobk')}</b></p><div class="row"><button class="btn t" onclick="fullBackup()">${t('bm')}</button><button class="btn s" onclick="dl('metadata.json',new Blob([JSON.stringify({v:1,type:'meta',docs:S.docs,folders:S.folders,log:S.log,set:S.set})],{type:'application/json'}))">${t('bmeta')}</button><label class="btn s" for="fr">${t('brs')}</label></div><p class="meta">${t('bnote')}</p></div>`}
+const toB64=b=>new Promise((r,j)=>{const f=new FileReader();f.onload=()=>r(f.result);f.onerror=j;f.readAsDataURL(b)});
+async function fullBackup(){try{const files={};for(const d of S.docs){const b=await blobOf(d.id);if(!b)throw new Error(d.name);files[d.id]=await toB64(b)}
+const out={v:1,type:'full',docs:S.docs,folders:S.folders,log:S.log,set:S.set,files};if(Object.keys(files).length!==S.docs.length)throw new Error('verify');
+dl('document-organizer-backup.json',new Blob([JSON.stringify(out)],{type:'application/json'}));S.last={t:Date.now(),ok:true};log('backup',nf(S.docs.length)+' items')}catch(e){S.last={t:Date.now(),ok:false,err:e.message};log('backup','',false,e.message)}save();backupPage()}
+const fromB64=u=>{const p=u.split(','),m=/:(.*?);/.exec(p[0])[1],s=atob(p[1]),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return new Blob([a],{type:m})};
+$('#fr').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const j=JSON.parse(await f.text());if(j.v!==1||!Array.isArray(j.docs)||!Array.isArray(j.folders))throw 0;if(!confirm(t('crs')))return;
+if(j.type==='full'){for(const d of j.docs){if(j.files&&j.files[d.id])await bx('readwrite',s=>s.put(fromB64(j.files[d.id]),d.id))}}
+S.docs=j.docs;S.folders=j.folders;S.log=j.log||[];S.set=Object.assign({},DEF,j.set);log('restore backup',f.name);boot()}catch(x){toast(t('bad'))}};
+function setPage(){const s=S.set,o=(v,l,c)=>`<option value="${v}" ${c===v?'selected':''}>${l}</option>`;
+$('#app').innerHTML=`<div class="card"><label class="fld">${t('thm')}<select onchange="S.set.theme=this.value;save();applySet()">${o('auto',t('auto'),s.theme)}${o('light',t('lt'),s.theme)}${o('dark',t('dk'),s.theme)}</select></label><label class="fld">${t('fs')}: <b id="fv">${s.fs}</b><input type="range" min="14" max="22" value="${s.fs}" oninput="S.set.fs=+this.value;$('#fv').textContent=this.value;save();applySet()"></label><label class="fld">${t('vw')}<select onchange="S.set.view=this.value;save()">${o('grid',t('gr'),s.view)}${o('list',t('ls'),s.view)}</select></label><button class="btn s" onclick="setLang()">${t('lang')}: ${L==='ar'?'العربية → English':'English → العربية'}</button>
+<h3>${t('rem')}</h3>${[30,7,3,1,0].map(n=>`<label style="margin-inline-end:12px"><input type="checkbox" ${s.rem[n]?'checked':''} onchange="S.set.rem[${n}]=this.checked?1:0;save()"> ${n}</label>`).join('')}
+<h3>${t('cards')}</h3>${s.cards.map((c,i)=>`<div class="row"><label style="flex:1"><input type="checkbox" ${s.hidden.includes(c)?'':'checked'} onchange="togC('${c}')"> ${t(c)}</label><button class="btn sm s" onclick="mvC(${i},-1)">▲</button><button class="btn sm s" onclick="mvC(${i},1)">▼</button></div>`).join('')}
+<div class="row"><button class="btn s" onclick="S.set.cards=[...DEF.cards];S.set.hidden=[];save();setPage()">${t('reset')}</button><button class="btn s" onclick="dl('settings.json',new Blob([JSON.stringify({v:1,type:'settings',set:S.set})],{type:'application/json'}))">${t('exs')}</button><label class="btn s" for="fs2">${t('ims')}</label></div><input type="file" id="fs2" accept=".json,application/json" class="vh" onchange="impSet(this)"></div>`}
+const togC=c=>{const h=S.set.hidden;h.includes(c)?h.splice(h.indexOf(c),1):h.push(c);save()};
+const mvC=(i,d)=>{const a=S.set.cards,j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];save();setPage()};
+async function impSet(el){const f=el.files[0];if(!f)return;try{const j=JSON.parse(await f.text());if(j.v!==1||j.type!=='settings'||typeof j.set!=='object')throw 0;S.set=Object.assign({},DEF,j.set);log('import settings',f.name);boot()}catch(e){toast(t('bad'))}}
+function aboutPage(){$('#app').innerHTML=`<div class="card"><h2>${t('app')} · ${T.app[1]}</h2><p>${t('dv')}: <b>عدنان صبياني</b></p><p>${t('mob')}: <a href="tel:00966542103430" dir="ltr">00966542103430</a></p><p>${t('wa')}: <a href="https://wa.me/96509600071" dir="ltr">0096509600071</a></p></div>`}
+boot();
+</script>
+</body>
+</html>
